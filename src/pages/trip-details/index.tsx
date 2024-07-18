@@ -10,6 +10,7 @@ export function TripDetailspage() {
 
     const [isCreateModalOpen, setCreateModalOpen] = useState(false)
 
+
     function openCreateModal(){
         if(isCreateModalOpen == false){
             setCreateModalOpen(true)

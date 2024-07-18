@@ -10,4 +10,8 @@ input {
     color-scheme: dark
 }
 
-
+.rdp-day_selected, 
+.rdp-day_selected:hover {
+  @apply bg-lime-300 text-zinc-900;
+  @apply rounded-full;
+}
