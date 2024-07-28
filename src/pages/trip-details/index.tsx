@@ -1,14 +1,19 @@
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { CreatActiveModal } from "./create-active-modal";
 import { ImportanteLinks } from "./importante-links";
 import { Guests } from "./guests";
 import { Actives } from "./actives";
 import { DestinationAndDateHeaader } from "./destination-and-date-header";
 
+import { useLocation } from "react-router-dom";
+
 export function TripDetailspage() {
 
     const [isCreateModalOpen, setCreateModalOpen] = useState(false)
+
+    const location = useLocation();
+    const { Destino, Data, Email} = location.state || {};
 
 
     function openCreateModal(){
@@ -19,11 +24,34 @@ export function TripDetailspage() {
         )
     }
 
+    const [activities, setActivities] = useState<{ title: string, occurs_at: string }[]>([]);
+
+  function createActivity(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const data = new FormData(event.currentTarget)
+
+    const title = data.get('title')?.toString() || '';
+    const occurs_at = data.get('occurs_at')?.toString() || '';
+
+    const newActivity = { title, occurs_at };
+
+    setActivities(prevActivities => {
+      const updatedActivities = [...prevActivities, newActivity];
+      return updatedActivities;
+    });
+
+    openCreateModal()
+
+  }
 
     return(
+        
         <div className="max-w-6xl px-6 py-10 mx-auto space-y-8">
-
-            <DestinationAndDateHeaader/>
+            <DestinationAndDateHeaader
+                Destino={Destino}
+                Data={Data}
+            />
 
             <main className="flex gap-16 px-4">
                 <div className="flex-1 space-y-6">
@@ -35,7 +63,9 @@ export function TripDetailspage() {
                         </button>
                     </div>
 
-                    <Actives/>
+                    <Actives
+                     activities={activities}
+                    />
 
                 </div>
 
@@ -46,7 +76,9 @@ export function TripDetailspage() {
 
                     <div className='w-full bg-zinc-800 h-px' />
 
-                    <Guests/>
+                    <Guests
+                        Email={Email }
+                    />
 
                 </div>
             </main>
@@ -54,6 +86,7 @@ export function TripDetailspage() {
             {isCreateModalOpen && (
                 <CreatActiveModal
                     openCreateModal={openCreateModal}
+                    onSubmit={createActivity}
                 />
             )}
         </div>

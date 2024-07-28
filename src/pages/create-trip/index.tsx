@@ -5,7 +5,7 @@ import { ConfirmTripsModal } from './confirm-trips-modal';
 import { DestinationAndDateStep } from './steps/Destination-and-date-step';
 import { InviteGuessStep } from './steps/invite-guess-step';
 import { DateRange } from 'react-day-picker';
-import { api } from '../../lib/axios';
+import { format } from 'date-fns';
 
 export function CreateTripPage() {
 
@@ -14,13 +14,15 @@ export function CreateTripPage() {
   const [isInputOpen, setIsInputOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmTravellOpen, setIsConfirmTravelOpen] = useState(false);
-  const [emailInvite, setEmailInvate] = useState([''
-  ]);
+  const [emailInvite, setEmailInvate] = useState(['']);
 
   const [destination, setDestination] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [ownerEmail, setOwnerEmail] = useState('')
   const [isDateStarts, setIsDateStarts] = useState <DateRange | undefined> ()
+
+  const displayeDate = isDateStarts && isDateStarts.from && isDateStarts.to 
+  ? format(isDateStarts.from, "d ' de ' LLL").concat(' até ').concat(format(isDateStarts.to, "d ' de ' LLL")) : null; 
 
   function openInput(){
     if (isInputOpen === false) {
@@ -74,42 +76,26 @@ export function CreateTripPage() {
     }
   }
 
-  async function createTrip( event : FormEvent<HTMLFormElement> ) {
+function createTrip( event : FormEvent<HTMLFormElement> ) {
 
     event.preventDefault()
 
-    console.log(destination)
-    console.log(isDateStarts)
-    console.log(emailInvite)
-    console.log(ownerName)
-    console.log(ownerEmail)
-
     if (!destination) {
-      return 
+      return window.alert("Insira um destino para a viagem")
     }
 
     if (!isDateStarts?.from || !isDateStarts?.to) {
-      return 
+      return window.alert("Insira uma data para a viagem")
     }
 
     if (emailInvite.length === 0) {
-      return 
+      return window.alert("Convide amigos para a viagem")
     }
 
     if (!ownerName || !ownerEmail) {
-      return 
+      return window.alert("Insira o nome e email do criador da viagem corretamente")
     }
-    console.log(isDateStarts.from)
-    const response = await api.post('/trips', {
-      destination,
-      starts_at: isDateStarts.from,
-      ends_at: isDateStarts.to,
-      emails_to_invite: emailInvite,
-      owner_name: ownerName,  
-      owner_email: ownerEmail
-    })
-    const { tripId } = response.data
-    navigate( `/trips/${tripId}` )
+    navigate('/trips', { state: { Destino: destination, Data:displayeDate, Email:emailInvite } } )
   }
   
   return (
@@ -143,7 +129,7 @@ export function CreateTripPage() {
         
 
         <p className="text-sm text-zinc-500">Ao planejar sua viagem pela plann.er você automaticamente concorda <br />
-        com nossos <a href="#" className="text-zinc-300 underline">termos de uso</a> e <a href="#" className="text-zinc-300 underline">políticas de privacidade</a>.
+        com nossos <a href="#" className="text-zinc-300 underline">termos de uso</a> e <a href='#' className="text-zinc-300 underline">políticas de privacidade</a>.
         </p>
 
       </div>

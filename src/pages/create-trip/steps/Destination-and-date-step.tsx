@@ -14,6 +14,8 @@ interface DestinationAndDateStepProps{
     setIsDateStarts: (dates : DateRange | undefined) => void
 }
 
+const today = new Date();
+
 export function DestinationAndDateStep({
 isInputOpen,
 openInput,
@@ -31,7 +33,7 @@ function OpenDatePicker() {
   if (isDatePickerOpen == false) {
     setIsDatePickerOpen(true)
   }else{
-    setIsDatePickerOpen(false)
+    setIsDatePickerOpen(false) 
   }
 }
 
@@ -69,7 +71,7 @@ function OpenDatePicker() {
                   </button>
                 </div>
               </div>
-              <DayPicker mode="range" selected={isDateStarts} onSelect={setIsDateStarts} />
+              <DayPicker mode="range" selected={isDateStarts} onSelect={setIsDateStarts} disabled={{ before: today}} />
             </div>
 
           </div>
